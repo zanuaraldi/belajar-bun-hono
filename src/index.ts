@@ -12,6 +12,9 @@ import {
 import {web} from "./web"
 import {z} from 'zod';
 import {zValidator} from "@hono/zod-validator";
+import {admin} from "./admin";
+import {operation} from "./operation";
+import {book} from "./book";
 
 class MyException extends Error {
 
@@ -78,22 +81,7 @@ app.get('/say-hello', async (c) => {
     return c.text(`Hello ${name}`)
 })
 
-const book = new Hono().basePath('/api');
-book
-    .get('/book', (c) => {
-        return c.text("Ini halaman Book")
-    })
-
-    .get('/book/a', (c) => {
-        return c.text("Ini halaman Book A")
-    })
-
-    .get('/book/:id', (c) => {
-        return c.text("Ini halaman Book ID")
-    })
-
 app.route('/', book);
-
 
 app
     .get('/context', async (c) => {
@@ -142,36 +130,7 @@ app
         return c.html("<html><body><h1>Hello Hono Respon HTML</h1></body></html>")
     })
 
-const admin = new Hono().basePath('/admin');
-
-admin.use(async (c, next) => {
-    const token = c.req.header("Authorization");
-
-    // jika token tidak ada akan muncul error
-    if (!token) {
-        throw new HTTPException(401);
-    }
-    //jika token ada maka akan akan lanjut
-    await next()
-})
-
-admin.get('/a', (c) => c.text("Admin A"))
-admin.get('/b', (c) => c.text("Admin B"))
-admin.get('/c', (c) => c.text("Admin C"))
-
 app.route('/', admin)
-
-const operation = new Hono().basePath('/operation');
-operation.use(basicAuth({
-    username: "admin",
-    password: "admin"
-}))
-operation.use(requestId())
-
-operation.get('/a', (c) => c.text(`operation A : ${c.get('requestId')}`))
-operation.get('/b', (c) => c.text(`operation B : ${c.get('requestId')}`))
-operation.get('/c', (c) => c.text(`operation C : ${c.get('requestId')}`))
-
 app.route('/', operation)
 
 app.get('/cookie/set', (c) => {
