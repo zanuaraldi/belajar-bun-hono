@@ -68,4 +68,19 @@ app.get('users', async (c) => {
 
     return c.text(`User with page ${page} and size ${size}`)
 })
+
+app
+    .get('/response/text', (c) => {
+        return c.text("Hello hono Response Text")
+    })
+    .get('/response/json', (c) => {
+        c.status(201)
+        c.header('X-Author', "Zanuar Aldi Syahputra")
+        return c.json({
+            data: "Hello Jono Response Json",
+        })
+    })
+    .get('/response/html', (c) =>{
+        return c.html("<html><body><h1>Hello Hono Respon HTML</h1></body></html>")
+    })
 export default app

@@ -9,3 +9,8 @@ Accept: application/json
 {
   "name": "Aldi"
 }
+
+
+###
+
+GET http://localhost:3000/response/json
