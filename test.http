@@ -22,3 +22,10 @@ GET http://localhost:3000/say-hello
 GET http://localhost:3000/admin/a
 Authorization: aldi
 ###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "Aldi",
+  "password": "Rahasia"
+}

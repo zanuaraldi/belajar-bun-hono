@@ -1,7 +1,7 @@
 import {Hono} from 'hono'
 import {HTTPException} from "hono/http-exception";
 import {basicAuth} from "hono/basic-auth";
-import { requestId } from 'hono/request-id'
+import {requestId} from 'hono/request-id'
 import {
     getCookie,
     getSignedCookie,
@@ -10,6 +10,8 @@ import {
     deleteCookie,
 } from 'hono/cookie'
 import {web} from "./web"
+import {z} from 'zod';
+import {zValidator} from "@hono/zod-validator";
 
 class MyException extends Error {
 
@@ -17,12 +19,12 @@ class MyException extends Error {
 
 const app = new Hono()
 
-app.onError(async (err, c) =>{
-    if(err instanceof HTTPException) {
+app.onError(async (err, c) => {
+    if (err instanceof HTTPException) {
         return err.getResponse()
     }
 
-    if(err instanceof MyException) {
+    if (err instanceof MyException) {
         c.status(401)
         return c.json({
             error: "Ups"
@@ -33,7 +35,7 @@ app.onError(async (err, c) =>{
     return c.text("Ups")
 })
 
-app.get('/ups', (c) =>{
+app.get('/ups', (c) => {
     throw new MyException();
 })
 
@@ -58,7 +60,7 @@ app
 app.get('/say-hello', async (c) => {
     const name = c.req.query('name')
     if (!name) {
-        throw new HTTPException(400,{
+        throw new HTTPException(400, {
             res: new Response(
                 JSON.stringify({
                     error: "Name param must not empty"
@@ -66,8 +68,8 @@ app.get('/say-hello', async (c) => {
                 {
                     status: 400,
                     headers: {
-                        "Author" : "Zanuar Aldi Syahputra",
-                        "Content-Type" : "application/json"
+                        "Author": "Zanuar Aldi Syahputra",
+                        "Content-Type": "application/json"
                     }
                 }
             )
@@ -136,7 +138,7 @@ app
             data: "Hello Jono Response Json",
         })
     })
-    .get('/response/html', (c) =>{
+    .get('/response/html', (c) => {
         return c.html("<html><body><h1>Hello Hono Respon HTML</h1></body></html>")
     })
 
@@ -146,7 +148,7 @@ admin.use(async (c, next) => {
     const token = c.req.header("Authorization");
 
     // jika token tidak ada akan muncul error
-    if(!token) {
+    if (!token) {
         throw new HTTPException(401);
     }
     //jika token ada maka akan akan lanjut
@@ -184,4 +186,17 @@ app.get('/cookie/get', (c) => {
 })
 
 app.route('/', web)
+
+app.post('/login',
+    zValidator('json', z.object({
+        username: z.string().min(3).max(10),
+        password: z.string().min(3).max(10),
+    })),
+    async (c) => {
+        const body = await c.req.json()
+        return c.json({
+            data: `Hello ${body.username}`
+        })
+    }
+)
 export default app

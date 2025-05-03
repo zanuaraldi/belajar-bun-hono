@@ -3,7 +3,7 @@ import app from "../src";
 
 describe('Application', () =>{
     it('GET /hello/:name',async () => {
-        const response = app.request("/hello/Aldi",{
+        const response = await app.request("/hello/Aldi",{
             method: "GET",
         })
 
