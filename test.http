@@ -18,3 +18,7 @@ GET http://localhost:3000/response/json
 ###
 
 GET http://localhost:3000/say-hello
+###
+GET http://localhost:3000/admin/a
+Authorization: aldi
+###
