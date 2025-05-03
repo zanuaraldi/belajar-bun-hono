@@ -35,4 +35,23 @@ book
     })
 
 app.route('/', book);
+
+
+app
+    .get('/context', async (c) => {
+        c.header('Content-Type', 'application/json');
+        c.status(200);
+
+        return c.body(JSON.stringify({
+            "first_name": "Zanuar",
+            "last_name": "Aldi",
+        }))
+    })
+
+    .get('/context/json', async (c) => {
+        return c.json({
+            "first_name": "Zanuar",
+            "last_name": "Aldi",
+        })
+    })
 export default app
