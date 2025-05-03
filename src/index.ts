@@ -9,6 +9,7 @@ import {
     setSignedCookie,
     deleteCookie,
 } from 'hono/cookie'
+import {web} from "./web"
 
 class MyException extends Error {
 
@@ -182,4 +183,5 @@ app.get('/cookie/get', (c) => {
     return c.text(`Cookie value : ${cookie['Hono-Cookie']}`)
 })
 
+app.route('/', web)
 export default app
