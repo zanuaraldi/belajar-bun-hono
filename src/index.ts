@@ -54,4 +54,18 @@ app
             "last_name": "Aldi",
         })
     })
+
+app.post('users', async (c) => {
+    const json = await c.req.json()
+    return c.json({
+        hello: `Hello ${json.name}`
+    })
+})
+
+app.get('users', async (c) => {
+    const page = c.req.query('page')
+    const size = c.req.query('size')
+
+    return c.text(`User with page ${page} and size ${size}`)
+})
 export default app
