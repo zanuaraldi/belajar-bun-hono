@@ -1,6 +1,31 @@
 import {Hono} from 'hono'
+import {HTTPException} from "hono/http-exception";
+
+class MyException extends Error {
+
+}
 
 const app = new Hono()
+
+app.onError(async (err, c) =>{
+    if(err instanceof HTTPException) {
+        return err.getResponse()
+    }
+
+    if(err instanceof MyException) {
+        c.status(401)
+        return c.json({
+            error: "Ups"
+        })
+    }
+
+    c.status(500)
+    return c.text("Ups")
+})
+
+app.get('/ups', (c) =>{
+    throw new MyException();
+})
 
 app
     .get('/hello/:name', (c) => {
@@ -19,6 +44,27 @@ app
     .get('/', (c) => {
         return c.text('Hello Hono!')
     })
+
+app.get('/say-hello', async (c) => {
+    const name = c.req.query('name')
+    if (!name) {
+        throw new HTTPException(400,{
+            res: new Response(
+                JSON.stringify({
+                    error: "Name param must not empty"
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        "Author" : "Zanuar Aldi Syahputra",
+                        "Content-Type" : "application/json"
+                    }
+                }
+            )
+        })
+    }
+    return c.text(`Hello ${name}`)
+})
 
 const book = new Hono().basePath('/api');
 book
